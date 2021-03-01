@@ -1,0 +1,5 @@
+- type: replace
+  path: /product-properties/.properties.logging_timestamp_format?
+  value:
+    value: deprecated
+    selected_option: deprecated

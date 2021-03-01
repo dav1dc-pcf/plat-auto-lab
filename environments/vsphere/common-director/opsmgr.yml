@@ -1,0 +1,4 @@
+---
+opsmgr_cpu: 4
+opsmgr_memory: 8
+opsmgr_disk_size: 300

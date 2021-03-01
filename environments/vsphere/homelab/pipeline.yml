@@ -20,8 +20,8 @@ resources:
 - name: installation
   type: gcs-resource
   source:
-    bucket: opsman-exports
-    json_key: ((opsman_backups_cloud_storage_key))
+    bucket: opsmgr-exports
+    json_key: ((opsmgr_backups_cloud_storage_key))
     regexp: ((foundation))/installation-(.*).zip
 
 - name: state
@@ -102,7 +102,7 @@ jobs:
     input_mapping:
       files: director-configuration
 
-- name: install-opsman
+- name: install-opsmgr
   plan:
   - aggregate:
     - get: director-configuration
@@ -127,9 +127,9 @@ jobs:
     input_mapping:
       files: director-configuration
 
-  - task: download-create-opsman
+  - task: download-create-opsmgr
     image: platform-automation-image
-    file: director-configuration/proposed-tasks/download-create-opsman.yml
+    file: director-configuration/proposed-tasks/download-create-opsmgr.yml
     input_mapping:
       download-config: director-configuration
       state: state
@@ -137,14 +137,14 @@ jobs:
       vars: director-configuration
       secrets: interpolated-files
     params:
-      DOWNLOAD_CONFIG_FILE: environments/((iaas))/((foundation))/config-director/versions/opsman.yml
+      DOWNLOAD_CONFIG_FILE: environments/((iaas))/((foundation))/config-director/versions/opsmgr.yml
       STATE_FILE: environments/((iaas))/((foundation))/state/state.yml
-      OPSMAN_CONFIG_FILE: environments/((iaas))/((foundation))/config-director/templates/opsman.yml
+      OPSMAN_CONFIG_FILE: environments/((iaas))/((foundation))/config-director/templates/opsmgr.yml
       VARS_FILES: |
-        vars/environments/((iaas))/common-director/opsman.yml
+        vars/environments/((iaas))/common-director/opsmgr.yml
         vars/environments/((iaas))/((foundation))/config-director/vars/infra.yml
-        vars/environments/((iaas))/((foundation))/config-director/vars/opsman.yml
-        secrets/environments/((iaas))/((foundation))/config-director/secrets/opsman.yml
+        vars/environments/((iaas))/((foundation))/config-director/vars/opsmgr.yml
+        secrets/environments/((iaas))/((foundation))/config-director/secrets/opsmgr.yml
         secrets/environments/((iaas))/((foundation))/config-director/secrets/pivnet.yml
 
     ensure: &make-state-commit
@@ -209,7 +209,7 @@ jobs:
   - aggregate:
     - get: director-configuration
       trigger: true
-      passed: [ install-opsman ]
+      passed: [ install-opsmgr ]
     - get: platform-automation-image
       resource: platform-automation
       params:
@@ -239,7 +239,7 @@ jobs:
     params:
       file: installation/installation-*.zip
 
-- name: upgrade-opsman
+- name: upgrade-opsmgr
   plan:
   - aggregate:
     - get: director-configuration
@@ -266,9 +266,9 @@ jobs:
     input_mapping:
       files: director-configuration
 
-  - task: download-upgrade-opsman
+  - task: download-upgrade-opsmgr
     image: platform-automation-image
-    file: director-configuration/proposed-tasks/download-upgrade-opsman.yml
+    file: director-configuration/proposed-tasks/download-upgrade-opsmgr.yml
     input_mapping:
       download-config: director-configuration
       state: state
@@ -278,14 +278,14 @@ jobs:
       installation: installation
       env: interpolated-files
     params:
-      DOWNLOAD_CONFIG_FILE: environments/((iaas))/((foundation))/config-director/versions/opsman.yml
+      DOWNLOAD_CONFIG_FILE: environments/((iaas))/((foundation))/config-director/versions/opsmgr.yml
       STATE_FILE: environments/((iaas))/((foundation))/state/state.yml
-      OPSMAN_CONFIG_FILE: environments/((iaas))/((foundation))/config-director/templates/opsman.yml
+      OPSMAN_CONFIG_FILE: environments/((iaas))/((foundation))/config-director/templates/opsmgr.yml
       VARS_FILES: |
-        vars/environments/((iaas))/common-director/opsman.yml
+        vars/environments/((iaas))/common-director/opsmgr.yml
         vars/environments/((iaas))/((foundation))/config-director/vars/infra.yml
-        vars/environments/((iaas))/((foundation))/config-director/vars/opsman.yml
-        secrets/environments/((iaas))/((foundation))/config-director/secrets/opsman.yml
+        vars/environments/((iaas))/((foundation))/config-director/vars/opsmgr.yml
+        secrets/environments/((iaas))/((foundation))/config-director/secrets/opsmgr.yml
         secrets/environments/((iaas))/((foundation))/config-director/secrets/pivnet.yml
       ENV_FILE: environments/((iaas))/((foundation))/config-director/secrets/env.yml
     ensure: *make-state-commit
@@ -303,7 +303,7 @@ jobs:
   - get: director-configuration
     trigger: true
     passed:
-    - "upgrade-opsman"
+    - "upgrade-opsmgr"
   - get: lock
   - put: lock
     params:
